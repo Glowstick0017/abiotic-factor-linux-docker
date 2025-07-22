@@ -1,6 +1,13 @@
-# Abiotic Factor Linux Docker
-For operating a dedicated server in Docker in order to use it under Linux.
-The container uses Wine to run the server under Linux. 
+# Abiotic Factor Linux Docker (ARM64)
+For operating a dedicated server in Docker on ARM64 architecture (such as Apple Silicon Macs, ARM64 Linux servers, etc.).
+The container runs the native Linux server binaries directly without Wine.
+
+## Requirements
+- ARM64-compatible host system (Apple Silicon Mac, ARM64 Linux server, etc.)
+- Docker with ARM64 support
+- SteamCMD must support downloading Linux ARM64 binaries for Abiotic Factor
+
+**Note**: This version requires that Abiotic Factor provides native Linux ARM64 server binaries. If the game only provides x86_64 Linux binaries, you may need to use emulation or a different approach.
 
 ## Setup
 1. Create a new empty directory in any location with enough storage space.
@@ -10,6 +17,20 @@ The container uses Wine to run the server under Linux.
     * This will run the server in the background and autostart it whenever the docker daemon starts. If you do not want this, remove `-d` from the command above.
     * This will download the Dedicated Server binaries and game files to the `gamefiles` directory.
     * Persistent save file data will be written to the `data` directory.
+
+## Building for ARM64
+If you need to build the container image yourself:
+
+### Using the build script:
+- **Linux/macOS**: `chmod +x build-arm64.sh && ./build-arm64.sh`
+- **Windows PowerShell**: `.\build-arm64.ps1`
+
+### Manual build:
+```bash
+docker buildx build --platform linux/arm64 -t abiotic-factor-linux-docker:arm64-latest .
+```
+
+Make sure you have Docker Buildx enabled for multi-platform builds.
 
 ## Update
 There are two ways to update the game server:
@@ -31,3 +52,5 @@ Possible launch parameters and further information on the dedicated servers for 
 
 ## Credits
 Thanks to @sirwillis92 for finding a solution to the startup problem with the `LogOnline: Warning: OSS: Async task 'FOnlineAsyncTaskSteamCreateServer bWasSuccessful: 0' failed in 15` message.
+
+**ARM64 Conversion Notes**: This version has been converted to run natively on ARM64 architecture by removing Wine dependency and using Linux server binaries directly. This should provide better performance on ARM64 systems but requires that the game provides native Linux ARM64 server binaries.

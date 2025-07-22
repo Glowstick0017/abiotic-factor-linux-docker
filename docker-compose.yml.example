@@ -1,6 +1,7 @@
 services:
   abiotic-server:
-    image: "ghcr.io/pleut/abiotic-factor-linux-docker:latest"
+    image: "ghcr.io/pleut/abiotic-factor-linux-docker:arm64-latest"
+    platform: linux/arm64
     restart: unless-stopped
     volumes:
       - "./gamefiles:/server"
