@@ -1,6 +1,6 @@
 services:
   abiotic-server:
-    image: "ghcr.io/pleut/abiotic-factor-linux-docker:arm64-latest"
+    image: "ghcr.io/glowstick0017/abiotic-factor-linux-docker:latest"
     platform: linux/arm64
     restart: unless-stopped
     volumes:

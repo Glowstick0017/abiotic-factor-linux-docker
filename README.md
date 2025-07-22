@@ -1,13 +1,17 @@
 # Abiotic Factor Linux Docker (ARM64)
 For operating a dedicated server in Docker on ARM64 architecture (such as Apple Silicon Macs, ARM64 Linux servers, etc.).
-The container runs the native Linux server binaries directly without Wine.
+The container uses QEMU emulation for SteamCMD and will run Linux server binaries (with emulation if needed).
 
 ## Requirements
 - ARM64-compatible host system (Apple Silicon Mac, ARM64 Linux server, etc.)
-- Docker with ARM64 support
-- SteamCMD must support downloading Linux ARM64 binaries for Abiotic Factor
+- Docker with ARM64 support and buildx enabled
+- QEMU emulation support (automatically installed in the container)
 
-**Note**: This version requires that Abiotic Factor provides native Linux ARM64 server binaries. If the game only provides x86_64 Linux binaries, you may need to use emulation or a different approach.
+**Important Notes**: 
+- SteamCMD runs through x86 emulation via QEMU since SteamCMD doesn't have native ARM64 support
+- This version will attempt to download Linux server binaries for Abiotic Factor
+- If the game only provides x86_64 Linux binaries, they will also run through emulation
+- Performance may be reduced compared to native x86_64 due to emulation overhead
 
 ## Setup
 1. Create a new empty directory in any location with enough storage space.
@@ -44,6 +48,8 @@ Sometimes, changes to this container image are necessary. To apply these:
 1. Merge the content of `docker-compose.yml` with any changes made from [`docker-compose.yml.example`](docker-compose.yml.example).
 2. Run `docker-compose pull` to download an updated version of the container image.
 
+**Note**: The container images are automatically built and published to GitHub Container Registry (GHCR) when changes are pushed to the main branch.
+
 ## Configuration
 An example configuration for docker-compose can be found in the `docker-compose.yml` file.
 In addition to the default settings, which can be set via the environment variables, further arguments can be specified via the `AdditionalArgs` environment variable.
@@ -53,4 +59,4 @@ Possible launch parameters and further information on the dedicated servers for 
 ## Credits
 Thanks to @sirwillis92 for finding a solution to the startup problem with the `LogOnline: Warning: OSS: Async task 'FOnlineAsyncTaskSteamCreateServer bWasSuccessful: 0' failed in 15` message.
 
-**ARM64 Conversion Notes**: This version has been converted to run natively on ARM64 architecture by removing Wine dependency and using Linux server binaries directly. This should provide better performance on ARM64 systems but requires that the game provides native Linux ARM64 server binaries.
+**ARM64 Conversion Notes**: This version has been converted to run on ARM64 architecture by using QEMU emulation for SteamCMD and x86 binaries when needed. While this enables ARM64 compatibility, performance may be reduced compared to native x86_64 execution due to emulation overhead.

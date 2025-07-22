@@ -30,15 +30,32 @@ fi
 # Check if Linux server binary exists
 if [ ! -f "/server/AbioticFactor/Binaries/Linux/AbioticFactorServer-Linux-Shipping" ]; then
     echo "ERROR: Linux server binary not found!"
-    echo "This may mean that Abiotic Factor doesn't provide ARM64 Linux server binaries."
+    echo "This may mean that Abiotic Factor doesn't provide Linux server binaries."
     echo "Path checked: /server/AbioticFactor/Binaries/Linux/AbioticFactorServer-Linux-Shipping"
     echo "Available binaries:"
     find /server -name "*Server*" -type f 2>/dev/null || echo "No server binaries found"
+    echo ""
+    echo "Checking for Windows binaries as fallback..."
+    if [ -f "/server/AbioticFactor/Binaries/Win64/AbioticFactorServer-Win64-Shipping.exe" ]; then
+        echo "Windows server binary found, but this ARM64 container doesn't support Wine."
+        echo "You may need to use the original x86_64 container with Wine instead."
+    fi
     exit 1
 fi
 
 # Make sure the binary is executable
 chmod +x /server/AbioticFactor/Binaries/Linux/AbioticFactorServer-Linux-Shipping
+
+# Check if the binary is x86_64 and warn about emulation
+BINARY_ARCH=$(file /server/AbioticFactor/Binaries/Linux/AbioticFactorServer-Linux-Shipping | grep -o "x86-64\|aarch64\|ARM aarch64")
+if echo "$BINARY_ARCH" | grep -q "x86-64"; then
+    echo "WARNING: Server binary is x86_64 and will run through QEMU emulation on ARM64."
+    echo "Performance may be reduced. Consider using a native x86_64 host if possible."
+elif echo "$BINARY_ARCH" | grep -q -E "aarch64|ARM aarch64"; then
+    echo "INFO: Server binary is native ARM64 - optimal performance expected."
+else
+    echo "INFO: Could not determine server binary architecture."
+fi
 
 echo "Starting Abiotic Factor Linux server..."
 pushd /server/AbioticFactor/Binaries/Linux > /dev/null
